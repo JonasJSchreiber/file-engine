@@ -24,7 +24,10 @@ spring:
         multipart:
             max-file-size: 25MB
             max-request-size: 100MB
-
+app:
+    absolute:
+        upload:
+            path: c:\tmp\ # needs trailing separator
 entitymanager:
     packages:
         to:
@@ -46,12 +49,10 @@ logging:
     level:
         org:
             hibernate:
-                SQL: DEBUG
-                stat: debug
-                type: trace
-                type.descriptor.sql.BasicBinder: TRACE
+                SQL: INFO
+                type.descriptor.sql.BasicBinder: INFO
             springframework:
-                security: DEBUG
+                security: INFO
 server:
     port: ${port:8680}
     servlet:

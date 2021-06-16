@@ -23,13 +23,13 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-//  @ExceptionHandler(FileStorageException.class)
-//  public ModelAndView handleException(FileStorageException exception, RedirectAttributes redirectAttributes) {
-//    ModelAndView mav = new ModelAndView();
-//    mav.addObject("message", exception.getMsg());
-//    mav.setViewName("error");
-//    return mav;
-//  }
+  @ExceptionHandler(FileStorageException.class)
+  public ModelAndView handleException(FileStorageException exception, RedirectAttributes redirectAttributes) {
+    ModelAndView mav = new ModelAndView();
+    mav.addObject("message", exception.getMsg());
+    mav.setViewName("error");
+    return mav;
+  }
 
   @Override
   protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(HttpMediaTypeNotSupportedException exception,
