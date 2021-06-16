@@ -1,0 +1,58 @@
+spring:
+    application:
+        name: file-engine
+    datasource:
+        hikari:
+            connectionTimeout: 30000
+            idleTimeout: 600000
+            maxLifetime: 1800000
+        type: com.zaxxer.hikari.HikariDataSource
+        driver-class-name: org.h2.Driver
+        platform: h2
+        url: jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;MODE=MySQL;IGNORECASE=TRUE
+        username: sa
+        password:
+        initialization-mode: always
+    h2:
+        console:
+            enabled: true
+    jpa:
+        properties:
+            hibernate:
+                generate_statistics: true
+    servlet:
+        multipart:
+            max-file-size: 25MB
+            max-request-size: 100MB
+
+entitymanager:
+    packages:
+        to:
+            scan: com.jonasjschreiber.fileengine
+hibernate:
+    dialect: org.hibernate.dialect.H2Dialect
+    ejb:
+        naming_strategy: org.hibernate.cfg.ImprovedNamingStrategy
+    format_sql: true
+    show_sql: true
+management:
+    endpoints:
+        web:
+            exposure:
+                include: prometheus,health,info,metrics
+    security:
+        enabled: false
+logging:
+    level:
+        org:
+            hibernate:
+                SQL: DEBUG
+                stat: debug
+                type: trace
+                type.descriptor.sql.BasicBinder: TRACE
+            springframework:
+                security: DEBUG
+server:
+    port: ${port:8680}
+    servlet:
+        contextPath: /
