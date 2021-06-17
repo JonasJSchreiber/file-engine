@@ -7,7 +7,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.*;
 import java.util.ArrayList;
@@ -20,7 +19,7 @@ import java.util.stream.Stream;
 @Slf4j
 public class FileService {
 
-    @Value("${app.absolute.upload.path:${user.home}}")
+    @Value("${app.absolute.upload.path:${user.home}/tmp}")
     public String uploadDir;
 
     protected final static List<String> ACCEPTABLE_TYPES = Arrays.asList("jpg", "png", "mp4", "mov", "avi", "bmp");
