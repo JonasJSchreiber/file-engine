@@ -57,3 +57,5 @@ server:
     port: ${port:8680}
     servlet:
         contextPath: /
+    session:
+        tracking-modes: cookie
