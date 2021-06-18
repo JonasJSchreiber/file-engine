@@ -22,16 +22,9 @@ public class ImageUtils {
     public static void generateThumbnail(String uploadDir, String filename) throws Exception {
         String thumbnailPath = getThumbnailPath(uploadDir, filename);
         BufferedImage img = ImageIO.read(new File(filename));
-        BufferedImage scaledImg = null;
-        if (img != null && img.getWidth() > 0) {
-            scaledImg = Thumbnails.of(new FileInputStream(filename)).scale(200/img.getWidth()).asBufferedImage();
-        } else {
-            scaledImg = Thumbnails.of(new FileInputStream(filename)).width(200).asBufferedImage();
-        }
-        if (scaledImg != null) {
-            ImageIO.write(scaledImg, getExtension(filename), new File(thumbnailPath));
-            log.info("Wrote thumbnail to: {}", thumbnailPath);
-        }
+        BufferedImage scaledImg = Thumbnails.of(new FileInputStream(filename)).scale((double) 200/img.getWidth()).asBufferedImage();
+        ImageIO.write(scaledImg, getExtension(filename), new File(thumbnailPath));
+        log.info("Wrote thumbnail to: {}", thumbnailPath);
     }
 
     public static String getThumbnailPath(String uploadDir, String filename) {
