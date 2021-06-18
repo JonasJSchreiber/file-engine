@@ -109,7 +109,11 @@
 			<artifactId>ffmpeg-platform</artifactId>
 			<version>4.3.2-1.5.5</version>
 		</dependency>
-
+		<dependency>
+			<groupId>org.bytedeco</groupId>
+			<artifactId>opencv-platform</artifactId>
+			<version>4.5.1-1.5.5</version>
+		</dependency>
 	</dependencies>
 
 	<build>
