@@ -22,8 +22,8 @@ spring:
                 generate_statistics: true
     servlet:
         multipart:
-            max-file-size: 25MB
-            max-request-size: 100MB
+            max-file-size: 200MB
+            max-request-size: 1000MB
 app:
     absolute:
         upload:

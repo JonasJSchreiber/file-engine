@@ -1,4 +1,4 @@
-FROM frolvlad/alpine-java:jdk8-slim
+FROM java:8
 
 RUN mkdir -p /opt/jonasjschreiber/fileengine/jars
 RUN mkdir -p /opt/jonasjschreiber/fileengine/logs
