@@ -20,11 +20,18 @@ public class ImageUtils {
     protected final static List<String> ACCEPTABLE_TYPES = Arrays.asList("jpg", "jpeg", "png", "mp4", "mov", "avi", "bmp");
 
     public static void generateThumbnail(String uploadDir, String filename) throws Exception {
-        BufferedImage img = ImageIO.read(new File(filename));
-        BufferedImage scaledImg = Thumbnails.of(new FileInputStream(filename)).scale(200/img.getWidth()).asBufferedImage();
         String thumbnailPath = getThumbnailPath(uploadDir, filename);
-        ImageIO.write(scaledImg, getExtension(filename), new File(thumbnailPath));
-        log.info("Wrote thumbnail to: {}", thumbnailPath);
+        BufferedImage img = ImageIO.read(new File(filename));
+        BufferedImage scaledImg = null;
+        if (img != null && img.getWidth() > 0) {
+            scaledImg = Thumbnails.of(new FileInputStream(filename)).scale(200/img.getWidth()).asBufferedImage();
+        } else {
+            scaledImg = Thumbnails.of(new FileInputStream(filename)).width(200).asBufferedImage();
+        }
+        if (scaledImg != null) {
+            ImageIO.write(scaledImg, getExtension(filename), new File(thumbnailPath));
+            log.info("Wrote thumbnail to: {}", thumbnailPath);
+        }
     }
 
     public static String getThumbnailPath(String uploadDir, String filename) {
