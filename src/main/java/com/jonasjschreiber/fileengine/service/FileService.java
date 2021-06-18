@@ -60,7 +60,7 @@ public class FileService {
             }
             Files.copy(file.getInputStream(), Paths.get(filename));
             if (VideoUtils.isVideoType(filename)) {
-                VideoUtils.generateVideoThumbnail(uploadDir, filename);
+                VideoUtils.generateVideoThumbnailXuggle(uploadDir, filename);
             } else {
                 ImageUtils.generateThumbnail(uploadDir, filename);
             }

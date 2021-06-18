@@ -1,4 +1,4 @@
-FROM java:8
+FROM vimalathithen/alpine-oracle-jdk8-x86:latest
 
 RUN mkdir -p /opt/jonasjschreiber/fileengine/jars
 RUN mkdir -p /opt/jonasjschreiber/fileengine/logs
