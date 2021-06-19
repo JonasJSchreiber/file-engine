@@ -18,7 +18,8 @@ public class VideoUtils {
     public static final List<String> VIDEO_TYPES = Arrays.asList("mp4", "mov", "avi");
 
     public static boolean isVideoType(String filename) {
-        return VIDEO_TYPES.contains(ImageUtils.getExtension(filename));
+        if (filename == null || filename.length() == 0) return false;
+        return VIDEO_TYPES.contains(ImageUtils.getExtension(filename.toLowerCase()));
     }
 
     public static final double SECONDS_BETWEEN_FRAMES = 1;
