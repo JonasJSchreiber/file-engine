@@ -1,6 +1,5 @@
 package com.jonasjschreiber.fileengine.utils;
 
-import com.xuggle.xuggler.Global;
 import io.humble.video.*;
 import io.humble.video.awt.MediaPictureConverter;
 import io.humble.video.awt.MediaPictureConverterFactory;
