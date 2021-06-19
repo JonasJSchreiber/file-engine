@@ -13,13 +13,6 @@
 	<version>0.1.0</version>
 	<name>file-engine</name>
 
-	<repositories>
-		<repository>
-			<id>dcm4che repo</id>
-			<url>https://www.dcm4che.org/maven2/</url>
-		</repository>
-	</repositories>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<javadoc.opts>-Xdoclint:none</javadoc.opts>
@@ -46,9 +39,9 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>xuggle</groupId>
-			<artifactId>xuggle-xuggler</artifactId>
-			<version>5.4</version>
+			<groupId>io.humble</groupId>
+			<artifactId>humble-video-all</artifactId>
+			<version>0.3.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

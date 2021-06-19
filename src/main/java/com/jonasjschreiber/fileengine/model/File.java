@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Image {
+public class File {
     private String filename;
     private String thumbnailName;
     private String thumbnailUrl;
     private String url;
+    private String type;
 }

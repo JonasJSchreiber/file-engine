@@ -1,7 +1,7 @@
 package com.jonasjschreiber.fileengine.service;
 
 import com.jonasjschreiber.fileengine.controller.FileStorageException;
-import com.jonasjschreiber.fileengine.model.Image;
+import com.jonasjschreiber.fileengine.model.File;
 import com.jonasjschreiber.fileengine.utils.ImageUtils;
 import com.jonasjschreiber.fileengine.utils.VideoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -60,7 +59,7 @@ public class FileService {
             }
             Files.copy(file.getInputStream(), Paths.get(filename));
             if (VideoUtils.isVideoType(filename)) {
-                VideoUtils.generateVideoThumbnailXuggle(uploadDir, filename);
+                VideoUtils.generateVideoThumbnailHumble(uploadDir, filename);
             } else {
                 ImageUtils.generateThumbnail(uploadDir, filename);
             }
@@ -73,17 +72,17 @@ public class FileService {
         }
     }
 
-    public List<Image> getList() throws IOException {
-        List<File> files = Files.walk(Paths.get(uploadDir))
+    public List<File> getList() throws IOException {
+        List<java.io.File> files = Files.walk(Paths.get(uploadDir))
                 .filter(Files::isRegularFile)
                 .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
-                .map(p -> new File(String.valueOf(p.getFileName())))
+                .map(p -> new java.io.File(String.valueOf(p.getFileName())))
                 .collect(Collectors.toList());
         return files.stream()
-                .sorted(Comparator.comparingLong(File::lastModified).reversed())
+                .sorted(Comparator.comparingLong(java.io.File::lastModified).reversed())
                 .map(f -> {
                     String filename = f.getName();
-                    Image image = com.jonasjschreiber.fileengine.model.Image.builder()
+                    File file = File.builder()
                             .filename(ImageUtils.getBaseNameOfFile(filename) + "." + ImageUtils.getExtension(filename))
                             .thumbnailName("thumbs/" + ImageUtils.getBaseNameOfFile(filename))
                             .thumbnailUrl(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
@@ -92,8 +91,10 @@ public class FileService {
                                     + (VideoUtils.isVideoType(filename) ?
                                         "/files/getVideo?filename=" : "/files/getImage?filename=")
                                     + filename)
+                            .type(VideoUtils.isVideoType((ImageUtils.getBaseNameOfFile(filename)
+                                    + "." + ImageUtils.getExtension(filename))) ? "video" : "image")
                             .build();
-                    return image;
+                    return file;
                 })
                 .distinct()
                 .collect(Collectors.toList());
