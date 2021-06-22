@@ -2,6 +2,7 @@ package com.jonasjschreiber.fileengine.service;
 
 import com.jonasjschreiber.fileengine.controller.FileStorageException;
 import com.jonasjschreiber.fileengine.model.File;
+import com.jonasjschreiber.fileengine.model.Image;
 import com.jonasjschreiber.fileengine.utils.ImageUtils;
 import com.jonasjschreiber.fileengine.utils.VideoUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -89,12 +90,66 @@ public class FileService {
                                     + "/files/getThumbnail?filename=" + filename)
                             .url(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
                                     + (VideoUtils.isVideoType(filename) ?
-                                        "/files/getVideo?filename=" : "/files/getImage?filename=")
+                                    "/files/getVideo?filename=" : "/files/getImage?filename=")
                                     + filename)
                             .type(VideoUtils.isVideoType((ImageUtils.getBaseNameOfFile(filename)
                                     + "." + ImageUtils.getExtension(filename))) ? "video" : "image")
                             .build();
                     return file;
+                })
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<File> getVideos() throws IOException {
+        List<java.io.File> files = Files.walk(Paths.get(uploadDir))
+                .filter(Files::isRegularFile)
+                .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
+                .filter(f -> VideoUtils.isVideoType(f.getFileName().toString()))
+                .map(p -> new java.io.File(String.valueOf(p.getFileName())))
+                .collect(Collectors.toList());
+        return files.stream()
+                .sorted(Comparator.comparingLong(java.io.File::lastModified).reversed())
+                .map(f -> {
+                    String filename = f.getName();
+                    File file = File.builder()
+                            .filename(ImageUtils.getBaseNameOfFile(filename) + "." + ImageUtils.getExtension(filename))
+                            .thumbnailName("thumbs/" + ImageUtils.getBaseNameOfFile(filename))
+                            .thumbnailUrl(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                    + "/files/getThumbnail?filename=" + filename)
+                            .url(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                    + (VideoUtils.isVideoType(filename) ?
+                                    "/files/getVideo?filename=" : "/files/getImage?filename=")
+                                    + filename)
+                            .type(VideoUtils.isVideoType((ImageUtils.getBaseNameOfFile(filename)
+                                    + "." + ImageUtils.getExtension(filename))) ? "video" : "image")
+                            .build();
+                    return file;
+                })
+                .distinct()
+                .collect(Collectors.toList());
+    }
+
+    public List<Image> getImages() throws IOException {
+        List<java.io.File> files = Files.walk(Paths.get(uploadDir))
+                .filter(Files::isRegularFile)
+                .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
+                .filter(f -> !VideoUtils.isVideoType(f.getFileName().toString()))
+                .map(p -> new java.io.File(String.valueOf(p.getFileName())))
+                .collect(Collectors.toList());
+        return files.stream()
+                .sorted(Comparator.comparingLong(java.io.File::lastModified).reversed())
+                .map(f -> {
+                    String filename = f.getName();
+                    Image image = Image.builder()
+                            .small(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                    + "/files/getThumbnail?filename=" + filename)
+                            .medium(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                            + "/files/getImage?filename=" + filename)
+                            .big(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                    + "/files/getImage?filename=" + filename)
+                            .build();
+                    return image;
                 })
                 .distinct()
                 .collect(Collectors.toList());

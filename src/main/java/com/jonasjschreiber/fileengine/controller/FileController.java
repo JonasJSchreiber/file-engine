@@ -32,6 +32,17 @@ public class FileController {
         return new ResponseEntity<>(fileService.getList(), HttpStatus.OK);
     }
 
+    @GetMapping("/listImages")
+    public ResponseEntity getListImages() throws IOException {
+        return new ResponseEntity<>(fileService.getImages(), HttpStatus.OK);
+    }
+
+    @GetMapping("/listVideos")
+    public ResponseEntity getListVideos() throws IOException {
+        return new ResponseEntity<>(fileService.getVideos(), HttpStatus.OK);
+    }
+
+
     @PostMapping("/uploadFile")
     public ResponseEntity uploadFile(@RequestParam("files") MultipartFile file, RedirectAttributes redirectAttributes) {
         fileService.uploadFile(file);
