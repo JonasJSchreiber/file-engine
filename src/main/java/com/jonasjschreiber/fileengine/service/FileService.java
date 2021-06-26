@@ -7,6 +7,7 @@ import com.jonasjschreiber.fileengine.utils.ImageUtils;
 import com.jonasjschreiber.fileengine.utils.VideoUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StreamUtils;
 import org.springframework.util.StringUtils;
@@ -40,6 +41,12 @@ public class FileService {
             log.error("Exception: ", e);
         }
         return null;
+    }
+
+
+    public FileSystemResource getVideo(String filename) {
+        log.info("Attempting to retrieve: {}", StringUtils.cleanPath(filename));
+        return new FileSystemResource(StringUtils.cleanPath(filename));
     }
 
     public void uploadFile(MultipartFile file) {
