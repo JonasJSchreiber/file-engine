@@ -18,11 +18,12 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.MessageFormat;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Service
@@ -138,14 +139,18 @@ public class FileService {
     }
 
     public List<Image> getImages() throws IOException {
-        List<java.io.File> files = Files.walk(Paths.get(uploadDir))
+        List<java.io.File> files = Files.list(Paths.get(uploadDir))
                 .filter(Files::isRegularFile)
                 .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
                 .filter(f -> !VideoUtils.isVideoType(f.getFileName().toString()))
-                .map(p -> new java.io.File(String.valueOf(p.getFileName())))
+                .map(Path::toFile)
+                .collect(Collectors.toMap(Function.identity(), java.io.File::lastModified))
+                .entrySet()
+                .stream()
+                .sorted(Collections.reverseOrder(Map.Entry.comparingByValue()))
+                .map(Map.Entry::getKey)
                 .collect(Collectors.toList());
         return files.stream()
-                .sorted(Comparator.comparingLong(java.io.File::lastModified).reversed())
                 .map(f -> {
                     String filename = f.getName();
                     Image image = Image.builder()
@@ -158,7 +163,6 @@ public class FileService {
                             .build();
                     return image;
                 })
-                .distinct()
                 .collect(Collectors.toList());
     }
 }
