@@ -110,39 +110,19 @@ public class FileService {
     }
 
     public List<File> getVideos() throws IOException {
-        List<java.io.File> files = Files.walk(Paths.get(uploadDir))
-                .filter(Files::isRegularFile)
-                .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
-                .filter(f -> VideoUtils.isVideoType(f.getFileName().toString()))
-                .map(p -> new java.io.File(String.valueOf(p.getFileName())))
-                .collect(Collectors.toList());
-        return files.stream()
-                .sorted(Comparator.comparingLong(java.io.File::lastModified).reversed())
-                .map(f -> {
-                    String filename = f.getName();
-                    File file = File.builder()
-                            .filename(ImageUtils.getBaseNameOfFile(filename) + "." + ImageUtils.getExtension(filename))
-                            .thumbnailName("thumbs/" + ImageUtils.getBaseNameOfFile(filename))
-                            .thumbnailUrl(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + "/files/getThumbnail?filename=" + filename)
-                            .url(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + (VideoUtils.isVideoType(filename) ?
-                                    "/files/getVideo?filename=" : "/files/getImage?filename=")
-                                    + filename)
-                            .type(VideoUtils.isVideoType((ImageUtils.getBaseNameOfFile(filename)
-                                    + "." + ImageUtils.getExtension(filename))) ? "video" : "image")
-                            .build();
-                    return file;
-                })
-                .distinct()
-                .collect(Collectors.toList());
+        return this.getFiles(true);
     }
 
     public List<Image> getImages() throws IOException {
+        return this.getFiles(false);
+    }
+
+    public List getFiles(boolean videos) throws IOException {
         List<java.io.File> files = Files.list(Paths.get(uploadDir))
                 .filter(Files::isRegularFile)
                 .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
-                .filter(f -> !VideoUtils.isVideoType(f.getFileName().toString()))
+                .filter(f -> videos ? VideoUtils.isVideoType(f.getFileName().toString())
+                        : !VideoUtils.isVideoType(f.getFileName().toString()))
                 .map(Path::toFile)
                 .collect(Collectors.toMap(Function.identity(), java.io.File::lastModified))
                 .entrySet()
@@ -157,7 +137,7 @@ public class FileService {
                             .small(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
                                     + "/files/getThumbnail?filename=" + filename)
                             .medium(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                            + "/files/getImage?filename=" + filename)
+                                    + "/files/getImage?filename=" + filename)
                             .big(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
                                     + "/files/getImage?filename=" + filename)
                             .build();
