@@ -44,7 +44,6 @@ public class FileService {
         return null;
     }
 
-
     public FileSystemResource getVideo(String filename) {
         log.info("Attempting to retrieve: {}", StringUtils.cleanPath(filename));
         return new FileSystemResource(StringUtils.cleanPath(filename));
@@ -79,34 +78,6 @@ public class FileService {
             throw new FileStorageException("Could not store file " + file.getOriginalFilename()
                 + ". Please try again!");
         }
-    }
-
-    public List<File> getList() throws IOException {
-        List<java.io.File> files = Files.walk(Paths.get(uploadDir))
-                .filter(Files::isRegularFile)
-                .filter(f -> ImageUtils.isAcceptableType(f.getFileName().toString()))
-                .map(p -> new java.io.File(String.valueOf(p.getFileName())))
-                .collect(Collectors.toList());
-        return files.stream()
-                .sorted(Comparator.comparingLong(java.io.File::lastModified).reversed())
-                .map(f -> {
-                    String filename = f.getName();
-                    File file = File.builder()
-                            .filename(ImageUtils.getBaseNameOfFile(filename) + "." + ImageUtils.getExtension(filename))
-                            .thumbnailName("thumbs/" + ImageUtils.getBaseNameOfFile(filename))
-                            .thumbnailUrl(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + "/files/getThumbnail?filename=" + filename)
-                            .url(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + (VideoUtils.isVideoType(filename) ?
-                                    "/files/getVideo?filename=" : "/files/getImage?filename=")
-                                    + filename)
-                            .type(VideoUtils.isVideoType((ImageUtils.getBaseNameOfFile(filename)
-                                    + "." + ImageUtils.getExtension(filename))) ? "video" : "image")
-                            .build();
-                    return file;
-                })
-                .distinct()
-                .collect(Collectors.toList());
     }
 
     public List<File> getVideos() throws IOException {

@@ -28,11 +28,6 @@ public class FileController {
     @Value("${app.absolute.upload.path:${user.home}/tmp}")
     public String uploadDir;
 
-    @GetMapping("/list")
-    public ResponseEntity getList() throws IOException {
-        return new ResponseEntity<>(fileService.getList(), HttpStatus.OK);
-    }
-
     @GetMapping("/listImages")
     public ResponseEntity getListImages() throws IOException {
         return new ResponseEntity<>(fileService.getImages(), HttpStatus.OK);
@@ -42,7 +37,6 @@ public class FileController {
     public ResponseEntity getListVideos() throws IOException {
         return new ResponseEntity<>(fileService.getVideos(), HttpStatus.OK);
     }
-
 
     @PostMapping("/uploadFile")
     public ResponseEntity uploadFile(@RequestParam("files") MultipartFile file, RedirectAttributes redirectAttributes) {
