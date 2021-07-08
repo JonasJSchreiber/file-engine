@@ -104,15 +104,31 @@ public class FileService {
         return files.stream()
                 .map(f -> {
                     String filename = f.getName();
-                    Image image = Image.builder()
-                            .small(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + "/files/getThumbnail?filename=" + filename)
-                            .medium(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + "/files/getImage?filename=" + filename)
-                            .big(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
-                                    + "/files/getImage?filename=" + filename)
-                            .build();
-                    return image;
+                    if (!videos) {
+                        Image image = Image.builder()
+                                .small(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                        + "/files/getThumbnail?filename=" + filename)
+                                .medium(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                        + "/files/getImage?filename=" + filename)
+                                .big(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                        + "/files/getImage?filename=" + filename)
+                                .build();
+                        return image;
+                    } else {
+                        File file = File.builder()
+                                .filename(ImageUtils.getBaseNameOfFile(filename) + "." + ImageUtils.getExtension(filename))
+                                .thumbnailName("thumbs/" + ImageUtils.getBaseNameOfFile(filename))
+                                .thumbnailUrl(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                        + "/files/getThumbnail?filename=" + filename)
+                                .url(ServletUriComponentsBuilder.fromCurrentContextPath().build().toUriString()
+                                        + (VideoUtils.isVideoType(filename) ?
+                                        "/files/getVideo?filename=" : "/files/getImage?filename=")
+                                        + filename)
+                                .type(VideoUtils.isVideoType((ImageUtils.getBaseNameOfFile(filename)
+                                        + "." + ImageUtils.getExtension(filename))) ? "video" : "image")
+                                .build();
+                        return file;
+                    }
                 })
                 .collect(Collectors.toList());
     }
